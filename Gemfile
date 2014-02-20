@@ -7,8 +7,8 @@ gem 'do_sqlite3'
 # Workaround until https://github.com/datamapper/dm-core/issues/242
 # is fixed in a released version of datamapper.
 gem 'dm-core',
-  :git => 'git://github.com/datamapper/dm-core',
-  :branch => 'release-1.2'
+  git: 'git://github.com/datamapper/dm-core',
+  branch: 'release-1.2'
 
 gem 'haml'
 gem 'sass'
@@ -20,8 +20,12 @@ gem 'sinatra-authorization'
 gem 'bcat'
 gem 'rake'
 
+gem "em-eventsource", "~> 0.1.8"
+
+gem 'pry'
+
 # If you want to use Thin:
-# gem 'thin'
+gem 'thin'
 
 # If you want to use Unicorn:
 # gem 'unicorn'
@@ -31,7 +35,7 @@ gem 'rake'
 # gem 'pony', '1.1'
 
 # = SES Email
-# gem 'aws-ses', '0.4.3', :require => 'aws/ses'
+# gem 'aws-ses', '0.4.3', require: 'aws/ses'
 
 # = Campfire
 # gem 'broach', '0.2.1'
@@ -44,9 +48,9 @@ gem 'rake'
 # gem 'shout-bot', '0.0.7'
 
 # = Dependencies for the :dj builder
-# gem 'sqlite3-ruby', '1.3.2'
-# gem 'activerecord', '3.0.3'
-# gem 'delayed_job', '2.1.2'
+gem 'sqlite3-ruby', '1.3.2'
+gem 'activerecord', '3.0.3'
+gem 'delayed_job', '3.0.5'
 # If running on ruby 1.9 with psych:
 # https://github.com/collectiveidea/delayed_job/issues/199
 # gem 'delayed_job', '3.0.0'
@@ -64,21 +68,24 @@ gem 'rake'
 # gem 'mysql'
 # gem 'dm-mysql-adapter', '1.0.2'
 
+# mini profiler
+gem 'rack-mini-profiler', '~> 0.9.0'
+
 # = Development dependencies.
 group :test do
-  gem 'aws-ses', :require => 'aws/ses'
+  gem 'aws-ses', require: 'aws/ses'
   gem 'extlib'
   gem 'sqlite3'
-  gem 'delayed_job'
+  # gem 'delayed_job'
   gem 'delayed_job_active_record'
-  gem 'activerecord',    '~> 3.2'
+  # gem 'activerecord',    '~> 3.2'
   gem 'i18n'
   gem 'rr'
   gem 'mocha'
   gem 'redgreen'
   gem 'dm-sweatshop',
-    :git => 'git://github.com/p/dm-sweatshop-without-parsetree',
-    :branch => 'integrity'
+    git: 'git://github.com/p/dm-sweatshop-without-parsetree',
+    branch: 'integrity'
   gem 'randexp'
   gem 'pony'
   gem 'rack-test'

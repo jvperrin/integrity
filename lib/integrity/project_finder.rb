@@ -17,11 +17,11 @@ module Integrity
     end
 
     def branches
-      all.all(:branch => @repo.branch)
+      all.all(branch: @repo.branch)
     end
 
     def branch
-      all.first(:branch => @repo.branch)
+      all.first(branch: @repo.branch)
     end
 
     def forked

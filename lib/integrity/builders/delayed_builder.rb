@@ -12,10 +12,10 @@ module Integrity
       ActiveRecord::Migration.suppress_messages do
         unless Delayed::Job.table_exists?
           ActiveRecord::Schema.define {
-            create_table :delayed_jobs, :force => true do |table|
+            create_table :delayed_jobs, force: true do |table|
               table.string   :queue
-              table.integer  :priority, :default => 0
-              table.integer  :attempts, :default => 0
+              table.integer  :priority, default: 0
+              table.integer  :attempts, default: 0
               table.text     :handler
               table.text     :last_error
               table.datetime :run_at

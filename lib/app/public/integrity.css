@@ -14,7 +14,7 @@ a {
     background-color: #ed1556; }
 
 #header, #content, #footer {
-  width: 40em;
+  width: 70em;
   margin: 0 auto;
   background: #eeeeee;
   padding: 0 2em;
@@ -77,6 +77,10 @@ a {
   #content form p {
     margin-top: 1em;
     position: relative; }
+  #content form.padded {
+    height: 30px;
+    display: inline-block;
+  }
     #content form p.checkbox label {
       margin-top: 0 !important; }
   #content form p.explanation {
@@ -316,8 +320,7 @@ a {
       background: #111111;
       color: white;
       padding: 0.5em;
-      overflow: auto;
-      max-height: 50em;
+      word-wrap: break-word;
       font-size: 0.825em; }
   #content #push_path {
     display: block;

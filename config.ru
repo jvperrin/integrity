@@ -4,4 +4,4 @@ if (ENV['ADMIN_USERNAME'] || ENV['ADMIN_USER']) && ENV['ADMIN_PASSWORD']
     username == (ENV['ADMIN_USERNAME'] || ENV['ADMIN_USER']) && password == ENV['ADMIN_PASSWORD']
   end
 end
-run Integrity.app
+map ('/integrity') { run Integrity.app }

@@ -18,20 +18,19 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
-    activemodel (3.2.13)
-      activesupport (= 3.2.13)
-      builder (~> 3.0.0)
-    activerecord (3.2.13)
-      activemodel (= 3.2.13)
-      activesupport (= 3.2.13)
-      arel (~> 3.0.2)
-      tzinfo (~> 0.3.29)
-    activesupport (3.2.13)
-      i18n (= 0.6.1)
-      multi_json (~> 1.0)
+    activemodel (3.0.3)
+      activesupport (= 3.0.3)
+      builder (~> 2.1.2)
+      i18n (~> 0.4)
+    activerecord (3.0.3)
+      activemodel (= 3.0.3)
+      activesupport (= 3.0.3)
+      arel (~> 2.0.2)
+      tzinfo (~> 0.3.23)
+    activesupport (3.0.3)
     addressable (2.3.3)
     ansi (1.4.3)
-    arel (3.0.2)
+    arel (2.0.10)
     aws-ses (0.4.4)
       builder
       mail (> 2.2.5)
@@ -43,12 +42,15 @@ GEM
     broach (0.2.1)
       json (~> 1.4)
       nap (~> 0.3)
-    builder (3.0.4)
+    builder (2.1.2)
     bunny (0.8.0)
     chronic_duration (0.10.2)
       numerizer (~> 0.1.1)
+    coderay (1.0.9)
     contest (0.1.3)
+    cookiejar (0.3.1)
     crack (0.3.2)
+    daemons (1.1.9)
     data_mapper (1.2.0)
       dm-aggregates (~> 1.2.0)
       dm-constraints (~> 1.2.0)
@@ -100,12 +102,25 @@ GEM
       dm-core (~> 1.2.0)
     do_sqlite3 (0.10.12)
       data_objects (= 0.10.12)
+    em-eventsource (0.1.8)
+      em-http-request (~> 1.0.0)
+      eventmachine (~> 1.0.0.beta3)
+    em-http-request (1.0.3)
+      addressable (>= 2.2.3)
+      cookiejar
+      em-socksify
+      eventmachine (>= 1.0.0.beta.4)
+      http_parser.rb (>= 0.5.3)
+    em-socksify (0.3.0)
+      eventmachine (>= 1.0.0.beta.4)
+    eventmachine (1.0.3)
     extlib (0.9.16)
     fastercsv (1.5.5)
     haml (4.0.2)
       tilt
     hpricot (0.8.6)
-    i18n (0.6.1)
+    http_parser.rb (0.6.0)
+    i18n (0.6.9)
     json (1.7.7)
     json_pure (1.7.7)
     mail (2.5.3)
@@ -113,17 +128,24 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     metaclass (0.0.1)
+    method_source (0.8.2)
     mime-types (1.22)
     mocha (0.13.3)
       metaclass (~> 0.0.1)
-    multi_json (1.7.2)
+    multi_json (1.8.4)
     nap (0.5.1)
     nokogiri (1.5.9)
     numerizer (0.1.1)
     polyglot (0.3.3)
     pony (1.4)
       mail (> 2.0)
+    pry (0.9.12.2)
+      coderay (~> 1.0.5)
+      method_source (~> 0.8)
+      slop (~> 3.4)
     rack (1.5.2)
+    rack-mini-profiler (0.9.0)
+      rack (>= 1.1.3)
     rack-protection (1.5.0)
       rack
     rack-test (0.6.2)
@@ -141,8 +163,14 @@ GEM
       tilt (~> 1.3, >= 1.3.4)
     sinatra-authorization (1.0.0)
       sinatra (>= 0.9.1.1)
+    slop (3.4.6)
     sqlite3 (1.3.7)
+    sqlite3-ruby (1.3.2)
     stringex (1.5.1)
+    thin (1.6.1)
+      daemons (>= 1.0.9)
+      eventmachine (>= 1.0.0)
+      rack (>= 1.0.0)
     tilt (1.3.7)
     timecop (0.6.1)
     treetop (1.4.12)
@@ -150,7 +178,7 @@ GEM
       polyglot (>= 0.3.1)
     turn (0.9.6)
       ansi
-    tzinfo (0.3.37)
+    tzinfo (0.3.38)
     uuidtools (2.1.3)
     webmock (1.11.0)
       addressable (>= 2.2.7)
@@ -165,7 +193,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activerecord (~> 3.2)
+  activerecord (= 3.0.3)
   aws-ses
   bcat
   broach
@@ -173,12 +201,13 @@ DEPENDENCIES
   chronic_duration
   contest
   data_mapper (~> 1.2)
-  delayed_job
+  delayed_job (= 3.0.5)
   delayed_job_active_record
   dm-core!
   dm-sqlite-adapter
   dm-sweatshop!
   do_sqlite3
+  em-eventsource (~> 0.1.8)
   extlib
   haml
   hpricot
@@ -187,6 +216,8 @@ DEPENDENCIES
   nap
   nokogiri
   pony
+  pry
+  rack-mini-profiler (~> 0.9.0)
   rack-test
   rake
   randexp
@@ -197,6 +228,8 @@ DEPENDENCIES
   sinatra
   sinatra-authorization
   sqlite3
+  sqlite3-ruby (= 1.3.2)
+  thin
   timecop
   turn
   webmock

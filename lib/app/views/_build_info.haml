@@ -1,6 +1,6 @@
-%form{ :action => build_path(build), :method => :post }
+%form{ action: build_path(build), method: :post }
   %p.submit
-    %button{ :type => :submit, :title => "Rebuild this commit" }<
+    %button{ type: :submit, title: "Rebuild this commit" }<
       Rebuild
 
 %h1
@@ -18,12 +18,12 @@
     %span.who<
       &== by: #{build.author}
     |
-    %span.when{ :title => build.committed_at }<
+    %span.when{ title: build.committed_at }<
       &= pretty_date build.committed_at
     - if build.project.github?
       |
       %span.github<
-        %a{ :href => github_commit_url(build) } view on GitHub
+        %a{ href: github_commit_url(build) } view on GitHub
 
 - if build.building? || build.completed?
   - if ! build.project.artifacts_empty? && !(files = artifact_files(build)).empty?
@@ -32,15 +32,28 @@
       %blockquote
         %ul#artifacts
           - files.each do |file|
-            %a{ :title => file[:relative_path],
-                :href => file[:url] } #{file[:name]}
+            %a{ title: file[:relative_path],
+                href: file[:url] } #{file[:name]}
             %br/
 
 - if build.completed? || build.building? && !build.output.empty?
-  %h2
-    Build Output
-    %a{:href => build_path(build, :raw)} (raw)
+  - if request.path.match(/builds\/\d+/)
+    %h2.output
+      Build Output
+      %a{ href: '#', id: :show_output } (hide)
+      %a{ href: build_path(build, :raw) } (raw)
 
-  %pre.output
-    :preserve
-      #{bash_color_codes h(build.output)}
+
+    %pre.output
+      :preserve
+        #{bash_color_codes h(build.output)}
+  - else
+    %h2.output
+      Build Output
+      %a{ href: '#', id: :show_output } (show)
+      %a{ href: build_path(build, :raw) } (raw)
+
+
+    %pre.output{ style: "display: none;" }
+      :preserve
+        #{bash_color_codes h(build.output)}

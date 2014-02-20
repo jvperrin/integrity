@@ -6,18 +6,18 @@ module Integrity
     include Notifiers
 
     property :id,         Serial
-    property :name,       String,   :required => true, :length => 255, :unique => true
-    property :permalink,  String,   :length => 255
-    property :uri,        URI,      :required => true, :length => 255
-    property :branch,     String,   :required => true, :length => 255, :default => "master"
-    property :command,    String,   :required => true, :length => 2000, :default => "rake"
-    property :artifacts,  String,   :required => false, :length => 1000
-    property :public,     Boolean,  :default  => true
-    property :last_build_id, Integer, :required => false
+    property :name,       String,   required: true,  length: 255, unique: true
+    property :permalink,  String,   length: 255
+    property :uri,        URI,      required: true,  length: 255
+    property :branch,     String,   required: true,  length: 255,  default: "master"
+    property :command,    String,   required: true,  length: 2000, default: "rake"
+    property :artifacts,  String,   required: false, length: 1000
+    property :public,     Boolean,  default:  true
+    property :last_build_id, Integer, required: false
 
     timestamps :at
 
-    default_scope(:default).update(:order => [:name.asc])
+    default_scope(:default).update(order: [:name.asc])
 
     has n, :builds
     has n, :notifiers
@@ -43,15 +43,15 @@ module Integrity
     end
 
     def build_head
-      build(Commit.new(:identifier => "HEAD"))
+      build(Commit.new(identifier: "HEAD"))
     end
 
     def build(commit)
-      _build = builds.create(:commit => {
-        :identifier   => commit.identifier,
-        :author       => commit.author,
-        :message      => commit.message,
-        :committed_at => commit.committed_at
+      _build = builds.create(commit: {
+        identifier:   commit.identifier,
+        author:       commit.author,
+        message:      commit.message,
+        committed_at: commit.committed_at
       })
       _build.run
       _build
@@ -59,18 +59,18 @@ module Integrity
 
     def fork(new_branch)
       forked = Project.create(
-        :name    => "#{name} (#{new_branch})",
-        :uri     => uri,
-        :branch  => new_branch,
-        :command => command,
-        :public  => public?
+        name:    "#{name} (#{new_branch})",
+        uri:     uri,
+        branch:  new_branch,
+        command: command,
+        public:  public?
       )
 
       notifiers.each { |notifier|
         forked.notifiers.create(
-          :name    => notifier.name,
-          :enabled => notifier.enabled?,
-          :config  => notifier.config
+          name:    notifier.name,
+          enabled: notifier.enabled?,
+          config:  notifier.config
         )
       }
 
@@ -83,7 +83,7 @@ module Integrity
 
     # TODO lame, there is got to be a better way
     def sorted_builds
-      builds(:order => [:created_at.desc, :id.desc])
+      builds(order: [:created_at.desc, :id.desc])
     end
 
     def blank?
@@ -108,7 +108,7 @@ module Integrity
         "status" => status
       }
     end
-    
+
     def to_json
       {
         "project" => attributes_for_json
@@ -126,7 +126,7 @@ module Integrity
           gsub(/-*$/, "")
         )
       end
-      
+
       def fix_line_endings
         command = self.command
         unless command.empty?

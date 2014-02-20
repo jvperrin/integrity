@@ -1,10 +1,13 @@
+require 'pry'
+
 module Integrity
   class Checkout
-    def initialize(repo, commit, directory, logger)
-      @repo      = repo
-      @commit    = commit
-      @directory = directory
-      @logger    = logger
+    def initialize(repo, commit, directory, project_name, logger)
+      @repo         = repo
+      @commit       = commit
+      @directory    = directory
+      @project_name = project_name
+      @logger       = logger
     end
 
     def run
@@ -16,7 +19,15 @@ module Integrity
     end
 
     def default_checkout
-      runner.run! "git clone #{@repo.uri} #{@directory}"
+      project_dir = Integrity.config.directory.join(@project_name)
+      unless project_dir.directory?
+        # run initial clone for reference
+        runner.run!("git clone --mirror #{@repo.uri} #{project_dir}") do |chunk|
+          yield chunk
+        end
+      end
+
+      runner.run! "git clone #{@repo.uri} --reference #{project_dir} #{@directory}"
 
       in_dir do |c|
         c.run! "git fetch origin"
@@ -37,7 +48,7 @@ module Integrity
       #
       # Therefore currently there seems to be no way to obtain invalid
       # UTF-8 from Git.
-      
+
       format = "---%n" \
         "identifier: %H%n" \
         "author: %an <%ae>%n" \
@@ -49,7 +60,7 @@ module Integrity
 
       result = run_in_dir!("git show -s --pretty=format:\"%b\" #{sha1}")
       dump['full_message'] = message + "\n\n" + result.output
-      
+
       # message (subject in git parlance) may be over 255 characters
       # which is our limit for the column; if so, truncate it intelligently
       if message.length > 255

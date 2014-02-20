@@ -1,3 +1,5 @@
+require 'pry'
+
 module Integrity
   class PayloadBuilder
     def self.build(payload, build_all)
@@ -21,7 +23,7 @@ module Integrity
     def builds
       @builds ||=
         projects.inject([]) { |acc, project|
-          acc.concat commits.map { |c| project.builds.create(:commit => c) }
+          acc.concat commits.map { |c| project.builds.create(commit: c) }
         }
     end
 

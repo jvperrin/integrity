@@ -12,7 +12,10 @@ module Integrity
 
     def build
       begin
-        start
+        start do |chunk|
+          add_output(chunk)
+        end
+
         run do |chunk|
           add_output(chunk)
         end
@@ -29,7 +32,7 @@ module Integrity
     def start
       @logger.info "Started building #{repo.uri} at #{commit}"
       @build.raise_on_save_failure = true
-      @build.update(:started_at => Time.now)
+      @build.update(started_at: Time.now)
       @build.project.enabled_notifiers.each { |n| n.notify_of_build_start(@build) }
       checkout.run
       # checkout.metadata invokes git and may fail
@@ -44,35 +47,35 @@ module Integrity
     end
 
     def add_output(chunk)
-      @build.update(:output => @build.output + chunk)
+      @build.update(output: @build.output + chunk)
     end
-    
+
     def complete
       @logger.info "Build #{commit} exited with #{@result.success} got:\n #{@result.output}"
 
       @build.raise_on_save_failure = true
       @build.update(
-        :completed_at => Time.now,
-        :successful   => @result.success,
-        :output       => @result.output
+        completed_at: Time.now,
+        successful:   @result.success,
+        output:       @result.output
       )
     end
-    
+
     def fail(exception)
       failure_message = "#{exception.class}: #{exception.message}"
-      
+
       @logger.info "Build #{commit} failed with an exception: #{failure_message}"
-      
+
       failure_message << "\n\n"
       exception.backtrace.each do |line|
         failure_message << line << "\n"
       end
-      
+
       @build.raise_on_save_failure = true
       @build.update(
-        :completed_at => Time.now,
-        :successful => false,
-        :output => failure_message
+        completed_at: Time.now,
+        successful: false,
+        output: failure_message
       )
     end
 
@@ -81,7 +84,7 @@ module Integrity
     end
 
     def checkout
-      @checkout ||= Checkout.new(repo, commit, directory, @logger)
+      @checkout ||= Checkout.new(repo, commit, directory, @build.project.name, @logger)
     end
 
     def directory

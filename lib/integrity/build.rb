@@ -3,18 +3,18 @@ module Integrity
     include DataMapper::Resource
 
     HUMAN_STATUS = {
-      :success  => "Built %s successfully",
-      :failed   => "Built %s and failed",
-      :pending  => "%s hasn't been built yet",
-      :building => "%s is building"
+      success:  "Built %s successfully",
+      failed:   "Built %s and failed",
+      pending:  "%s hasn't been built yet",
+      building: "%s is building"
     }
-    
+
     GLOB_CHARS = '*?[]'
 
     property :id,           Serial
-    property :project_id,   Integer   # TODO :nullable => false
-    property :output,       Text,     :default => "", :length => 1048576
-    property :successful,   Boolean,  :default => false
+    property :project_id,   Integer   # TODO nullable: false
+    property :output,       Text,     default: "", length: 1048576
+    property :successful,   Boolean,  default: false
     property :started_at,   DateTime
     property :completed_at, DateTime
 
@@ -25,7 +25,7 @@ module Integrity
 
     after :create do
       project.raise_on_save_failure = true
-      project.update(:last_build_id => id)
+      project.update(last_build_id: id)
     end
 
     before :destroy do
@@ -140,13 +140,13 @@ module Integrity
     def human_status
       HUMAN_STATUS[status] % sha1_short
     end
-    
+
     def human_duration
       return if pending? || building?
       delta = Integrity.datetime_to_utc_time(completed_at).to_i - Integrity.datetime_to_utc_time(started_at).to_i
       Integrity.human_duration(delta)
     end
-    
+
     def human_time_since_start
       return if pending?
       # to_i returns utc timestamp
@@ -157,7 +157,7 @@ module Integrity
     def build_directory
       Pathname.new(Integrity.config.directory).join(self.id.to_s)
     end
-    
+
     def escape_glob(path)
       escaped = path
       each_char(GLOB_CHARS) do |char|
@@ -166,7 +166,7 @@ module Integrity
       escaped
     end
     private :escape_glob
-    
+
     def each_char(str)
       if str.respond_to?(:each_char)
         # ruby 1.9
@@ -181,7 +181,7 @@ module Integrity
       end
     end
     private :each_char
-    
+
     def artifact_files
       build_dir = build_directory
 =begin
@@ -225,15 +225,15 @@ module Integrity
           relative_path = file
         end
         {
-          :name => File.basename(file),
-          :relative_path => relative_path,
+          name: File.basename(file),
+          relative_path: relative_path,
         }
       end
       all_files.sort do |a, b|
         a[:name] <=> b[:name]
       end
     end
-    
+
     def to_json
       {
         'build' => {

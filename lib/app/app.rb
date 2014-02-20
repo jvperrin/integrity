@@ -1,5 +1,8 @@
 require "app/helpers"
 require 'cgi'
+require 'rack-mini-profiler'
+
+require 'pry'
 
 module Integrity
   class App < Sinatra::Base
@@ -7,17 +10,21 @@ module Integrity
     enable  :methodoverride, :static
     disable :build_all
 
+    enable :logging, :dump_errors, :raise_errors, :show_exceptions
+
+    use Rack::MiniProfiler
+
     helpers Integrity::Helpers
 
     not_found do
       status 404
-      show :not_found, :title => "lost, are we?"
+      show :not_found, title: "lost, are we?"
     end
 
     error do
       @error = request.env["sinatra.error"]
       status 500
-      show :error, :title => "something has gone terribly wrong"
+      show :error, title: "something has gone terribly wrong"
     end
 
     before do
@@ -38,27 +45,27 @@ module Integrity
       end
 
       Payload.build(
-        JSON.parse(params[:payload]),
+        JSON.parse(request.body.read),
         Integrity.config.build_all?
       ).to_s
     end
 
-    get "/?", :provides => 'html' do
+    get "/?", provides: 'html' do
       load_projects
-      show :home, :title => "projects"
+      show :home, title: "projects"
     end
 
-    get '/?', :provides => 'json' do
+    get '/?', provides: 'json' do
       load_projects
       projects_json = @projects.map do |project|
         project.attributes_for_json
       end
-      wrapped_projects = {:projects => projects_json}
+      wrapped_projects = {projects: projects_json}
       json wrapped_projects
     end
 
     def load_projects
-      @projects = authorized? ? Project.all : Project.all(:public => true)
+      @projects = authorized? ? Project.all : Project.all(public: true)
 
       # we may have no projects defined yet
       @status = :blank
@@ -101,6 +108,37 @@ module Integrity
     end
     private :load_projects
 
+    connections = []
+    notifications = []
+
+    get '/connect', provides: 'text/event-stream' do
+      stream :keep_open do |out|
+        connections << out
+
+        test = { "notification" => "test" }.to_json
+
+        # Periodic notification:
+        # EventMachine::PeriodicTimer.new(10) { out << "data: #{test}\n\n" }
+
+        # out.callback is called on stream close event
+        out.callback {
+          connections.delete(out) # Delete the connection
+        }
+      end
+    end
+
+    post '/push' do
+      puts params
+      # Add the timestamp to the notification
+      notification = params.merge({ 'timestamp' => Time.now.strftime("%H:%M:%S") }).to_json
+
+      connections.each { |out| out << "data: #{notification}\n\n" }
+    end
+
+
+
+
+
     get "/login" do
       login_required
 
@@ -111,7 +149,7 @@ module Integrity
       login_required
 
       @project = Project.new
-      show :new, :title => ["projects", "new project"]
+      show :new, title: ["projects", "new project"]
     end
 
     post "/?" do
@@ -123,7 +161,7 @@ module Integrity
         update_notifiers_of(@project)
         redirect project_url(@project).to_s
       else
-        show :new, :title => ["projects", "new project"]
+        show :new, title: ["projects", "new project"]
       end
     end
 
@@ -136,7 +174,7 @@ module Integrity
     get "/:project\.json" do
       @format = :json
       login_required unless current_project.public?
-      
+
       json current_project
     end
 
@@ -144,7 +182,7 @@ module Integrity
       login_required unless current_project.public?
 
       if limit = Integrity.config.project_default_build_count
-        @builds = current_project.sorted_builds.all(:limit => limit + 1)
+        @builds = current_project.sorted_builds.all(limit: limit + 1)
         if @builds.length <= limit
           @showing_all_builds = true
         else
@@ -158,7 +196,7 @@ module Integrity
 
       @status = current_project.status
 
-      show :project, :title => ["projects", current_project.name]
+      show :project, title: ["projects", current_project.name]
     end
 
     get "/:project/all" do
@@ -167,7 +205,7 @@ module Integrity
       @builds = current_project.sorted_builds
       @showing_all_builds = true
 
-      show :project, :title => ["projects", current_project.name]
+      show :project, title: ["projects", current_project.name]
     end
 
     get "/:project/ping" do
@@ -187,7 +225,7 @@ module Integrity
         update_notifiers_of(current_project)
         redirect project_url(current_project).to_s
       else
-        show :new, :title => ["projects", current_project.permalink, "edit"]
+        show :new, title: ["projects", current_project.permalink, "edit"]
       end
     end
 
@@ -201,7 +239,7 @@ module Integrity
     get "/:project/edit" do
       login_required
 
-      show :new, :title => ["projects", current_project.permalink, "edit"]
+      show :new, title: ["projects", current_project.permalink, "edit"]
     end
 
     post "/:project/builds" do
@@ -230,13 +268,13 @@ module Integrity
         halt 404
       end
 
-      send_file fs_path, :filename => file[:name]
+      send_file fs_path, filename: file[:name]
     end
 
     get "/:project/builds/:build\.json" do
       @format = :json
       login_required unless current_project.public?
-      
+
       json current_build
     end
 
@@ -244,7 +282,7 @@ module Integrity
       login_required unless current_project.public?
 
       @status = current_build.status
-      show :build, :title => ["projects", current_project.permalink,
+      show :build, title: ["projects", current_project.permalink,
         current_build.sha1_short]
     end
 
