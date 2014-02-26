@@ -1,6 +1,6 @@
 ---
 environment: production
-chdir: /usr/home/www-data/integrity
+chdir: /srv/integrity
 rackup: config.ru
 pid: tmp/pids/thin.pid
 log: logs/thin.log

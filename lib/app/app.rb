@@ -108,6 +108,8 @@ module Integrity
     end
     private :load_projects
 
+    # Start of pushing data to clients when builds start, complete, and
+    # console output, etc.
     connections = []
     notifications = []
 
@@ -133,10 +135,8 @@ module Integrity
       notification = params.merge({ 'timestamp' => Time.now.strftime("%H:%M:%S") }).to_json
 
       connections.each { |out| out << "data: #{notification}\n\n" }
+      notification
     end
-
-
-
 
 
     get "/login" do

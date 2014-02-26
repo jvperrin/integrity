@@ -1,0 +1,1 @@
+thin -C doc/thin.yml restart

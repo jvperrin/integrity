@@ -20,12 +20,15 @@ gem 'sinatra-authorization'
 gem 'bcat'
 gem 'rake'
 
-gem "em-eventsource", "~> 0.1.8"
+gem 'em-eventsource', '~> 0.1.8'
 
 gem 'pry'
 
 # If you want to use Thin:
 gem 'thin'
+
+# Foreman
+gem 'foreman', '~> 0.63.0'
 
 # If you want to use Unicorn:
 # gem 'unicorn'
