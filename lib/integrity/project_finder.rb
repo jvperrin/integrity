@@ -31,7 +31,8 @@ module Integrity
     end
 
     def all
-      @all ||= Project.all(:uri.like => "%#{@repo.uri}%")
+      repo_uri = @repo.uri.match(/:(.+\/.+)$/)[1]
+      @all ||= Project.all(:uri.like => "%#{repo_uri}%")
     end
   end
 end
