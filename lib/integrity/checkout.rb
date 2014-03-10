@@ -1,10 +1,9 @@
 module Integrity
   class Checkout
-    def initialize(repo, commit, directory, project_name, logger)
+    def initialize(repo, commit, directory, logger)
       @repo         = repo
       @commit       = commit
       @directory    = directory
-      @project_name = project_name
       @logger       = logger
     end
 
