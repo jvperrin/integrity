@@ -1,5 +1,3 @@
-require 'pry'
-
 module Integrity
   class Checkout
     def initialize(repo, commit, directory, project_name, logger)
@@ -19,15 +17,7 @@ module Integrity
     end
 
     def default_checkout
-      project_dir = Integrity.config.directory.join(@project_name)
-      unless project_dir.directory?
-        # run initial clone for reference
-        runner.run!("git clone --mirror #{@repo.uri} #{project_dir}") do |chunk|
-          yield chunk
-        end
-      end
-
-      runner.run! "git clone #{@repo.uri} --reference #{project_dir} #{@directory}"
+      runner.run! "git clone #{@repo.uri} #{@directory} --depth 1"
 
       in_dir do |c|
         c.run! "git fetch origin"

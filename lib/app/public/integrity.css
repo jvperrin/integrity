@@ -86,9 +86,11 @@ a {
   #content form p.explanation {
     margin-left: 8.75em; }
   #content form input.text, #content form textarea, #content form select {
-    width: 30em;
+    width: 60em;
     padding: 0.2em 0.4em;
     color: #4e4e4e; }
+  #content form textarea {
+    height: 20em; }
   #content form input.text {
     height: 1.4em; }
   #content form label {
@@ -122,7 +124,7 @@ a {
       content: "* ";
       color: #ed1556; }
   #content form .required input.text {
-    width: 25.6em;
+    width: 45.6em;
     font-size: 24px;
     font-weight: bold; }
   #content form .normal {

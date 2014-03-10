@@ -57,7 +57,7 @@ module Integrity
           exec(command)
         end
       end
-      
+
       # output may be invalid UTF-8, as it is produced by the build command.
       output = Integrity.clean_utf8(output)
 
@@ -99,7 +99,7 @@ module Integrity
     # gemset.
     def with_clean_env
       bundled_env = ENV.to_hash
-      SIDE_EFFECT_VARS.each{ |var| ENV.delete(var) }
+      SIDE_EFFECT_VARS.each { |var| ENV.delete(var) }
       yield
     ensure
       ENV.replace(bundled_env.to_hash)

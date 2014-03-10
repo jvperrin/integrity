@@ -1,5 +1,3 @@
-require 'pry'
-
 module Integrity
   class PayloadBuilder
     def self.build(payload, build_all)

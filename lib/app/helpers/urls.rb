@@ -9,9 +9,9 @@ module Integrity
         repo  = parts.last.chomp(".git")
 
         if ! branch || project.branch == "master"
-          "http://github.com/#{user}/#{repo}"
+          "https://github.com/#{user}/#{repo}"
         else
-          "http://github.com/#{user}/#{repo}/compare/" \
+          "https://github.com/#{user}/#{repo}/compare/" \
             "master...#{project.branch}"
         end
       end
