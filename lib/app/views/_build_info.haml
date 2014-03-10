@@ -3,13 +3,8 @@
     %button{ type: :submit, title: "Rebuild this commit" }<
       Rebuild
 
-%h1
-  = build.human_status
-  - if build.building?
-    - if build.human_time_since_start && !build.human_time_since_start.empty?
-      &== for #{build.human_time_since_start}
-  - elsif !build.pending?
-    &== in #{build.human_duration}
+%h1#build_status
+  = build.human_status_with_time
 
 %blockquote
   %p
@@ -36,7 +31,7 @@
                 href: file[:url] } #{file[:name]}
             %br/
 
-- if build.completed? || build.building? && !build.output.empty?
+- if build.completed? || build.building?
   - if request.path.match(/builds\/\d+/)
     %h2.output
       Build Output

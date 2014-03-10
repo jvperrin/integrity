@@ -18,9 +18,6 @@
   %p
     %button{ title: "Notify of this build" }
       Notify of this build
-/ - if @build.pending? || @build.building?
-/   %script{ type: 'text/javascript' }
-/     setTimeout(function() { window.location.reload(); }, 5000);
 
 %div#wrapper
   %input{ type: "text", id: "message", placeholder: "Enter Notification Here" }

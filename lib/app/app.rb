@@ -1,6 +1,5 @@
 require "app/helpers"
 require 'cgi'
-require 'rack-mini-profiler'
 
 require 'pry'
 
@@ -11,8 +10,6 @@ module Integrity
     disable :build_all
 
     enable :logging, :dump_errors, :raise_errors, :show_exceptions
-
-    use Rack::MiniProfiler
 
     helpers Integrity::Helpers
 
@@ -113,14 +110,19 @@ module Integrity
     connections = []
     notifications = []
 
-    get '/connect', provides: 'text/event-stream' do
+    get '/:project/builds/:build/connect', provides: 'text/event-stream' do
+      build = Build.first(id: params[:build])
+
       stream :keep_open do |out|
         connections << out
 
-        test = { "notification" => "test" }.to_json
-
         # Periodic notification:
-        # EventMachine::PeriodicTimer.new(10) { out << "data: #{test}\n\n" }
+        if build && [:building, :pending].include?(build.reload.try(:status))
+          ping_data = -> { { status: build.try(:human_status_with_time),
+                             build_output: (bash_color_codes h(build.reload.try(:output))) }.to_json }
+
+          EventMachine::PeriodicTimer.new(1) { out << "data: #{ping_data.call}\n\n" }
+        end
 
         # out.callback is called on stream close event
         out.callback {
@@ -129,15 +131,14 @@ module Integrity
       end
     end
 
-    post '/push' do
+    post '/:project/builds/:build/push' do
       puts params
       # Add the timestamp to the notification
-      notification = params.merge({ 'timestamp' => Time.now.strftime("%H:%M:%S") }).to_json
+      notification = params.to_json
 
       connections.each { |out| out << "data: #{notification}\n\n" }
       notification
     end
-
 
     get "/login" do
       login_required

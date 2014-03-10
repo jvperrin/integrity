@@ -67,7 +67,7 @@ Integrity.configure do |c|
 
   # Which builder to use. Please refer to the documentation for the list
   # of builders and their limitations
-  c.builder                     = :dj, { adapter: "sqlite3", database: "dj.db" }
+  c.builder                     = :dj, { adapter: "sqlite3", database: "db/integrity.db" }
 
   # How many builds to show by default on project pages
   c.project_default_build_count = 20

@@ -71,9 +71,6 @@ gem 'delayed_job', '3.0.5'
 # gem 'mysql'
 # gem 'dm-mysql-adapter', '1.0.2'
 
-# mini profiler
-gem 'rack-mini-profiler', '~> 0.9.0'
-
 # = Development dependencies.
 group :test do
   gem 'aws-ses', require: 'aws/ses'

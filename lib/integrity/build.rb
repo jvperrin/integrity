@@ -141,6 +141,18 @@ module Integrity
       HUMAN_STATUS[status] % sha1_short
     end
 
+    def human_status_with_time
+      if building?
+        if human_time_since_start && !human_time_since_start.empty?
+          human_status + "for #{human_time_since_start}"
+        elsif !pending?
+          human_status + "in #{human_duration}"
+        end
+      else
+        human_status
+      end
+    end
+
     def human_duration
       return if pending? || building?
       delta = Integrity.datetime_to_utc_time(completed_at).to_i - Integrity.datetime_to_utc_time(started_at).to_i
