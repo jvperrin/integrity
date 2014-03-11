@@ -3,7 +3,7 @@ require 'cgi'
 module Integrity
   module Helpers
     module Urls
-      def github_project_url(project, branch=true)
+      def github_project_url(project, branch = true)
         parts = project.uri.path.split("/").reject { |x| x.empty? }
         user  = parts.first
         repo  = parts.last.chomp(".git")
@@ -73,6 +73,10 @@ module Integrity
 
       def build_path(build, *path)
         project_path(build.project, "builds", build.id, *path)
+      end
+
+      def build_coverage_path(build, *path)
+        path("coverage", build.id, "index.html", *path)
       end
 
       def artifact_path(build, artifact, *path)

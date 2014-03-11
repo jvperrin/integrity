@@ -1,4 +1,5 @@
 require "integrity/project/notifiers"
+require "fileutils"
 
 module Integrity
   class Project
@@ -13,7 +14,6 @@ module Integrity
     property :command,    String,   required: true,  length: 2000, default: "rake"
     property :artifacts,  String,   required: false, length: 1000
     property :public,     Boolean,  default:  true
-    property :last_build_id, Integer, required: false
 
     timestamps :at
 
@@ -21,13 +21,16 @@ module Integrity
 
     has n, :builds
     has n, :notifiers
-    belongs_to :last_build, 'Build'
 
     before :save, :set_permalink
     before :save, :fix_line_endings
 
     before :destroy do
       builds.destroy!
+    end
+
+    def last_build
+      builds.last
     end
 
     def get_artifacts
@@ -54,6 +57,9 @@ module Integrity
         committed_at: commit.committed_at
       })
       _build.run
+      coverage_storage = "lib/app/public/coverage/#{_build.id}"
+      FileUtils.mkdir_p coverage_storage
+      FileUtils.cp_r(Dir["builds/#{_build.id}/spec/coverage/*"], coverage_storage)
       _build
     end
 
@@ -87,7 +93,7 @@ module Integrity
     end
 
     def blank?
-      last_build.nil?
+      builds.count == 0
     end
 
     def status

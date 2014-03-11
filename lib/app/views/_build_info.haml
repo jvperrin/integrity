@@ -32,23 +32,12 @@
             %br/
 
 - if build.completed? || build.building?
-  - if request.path.match(/builds\/\d+/)
-    %h2.output
-      Build Output
-      %a{ href: '#', id: :show_output } (hide)
-      %a{ href: build_path(build, :raw) } (raw)
+  %h2.output
+    Build Output
+    %a{ href: '#', id: :show_output } (hide)
+    %a{ href: build_path(build, :raw) } (raw)
 
 
-    %pre.output
-      :preserve
-        #{bash_color_codes h(build.output)}
-  - else
-    %h2.output
-      Build Output
-      %a{ href: '#', id: :show_output } (show)
-      %a{ href: build_path(build, :raw) } (raw)
-
-
-    %pre.output{ style: "display: none;" }
-      :preserve
-        #{bash_color_codes h(build.output)}
+  %pre.output
+    :preserve
+      #{bash_color_codes h(build.output)}

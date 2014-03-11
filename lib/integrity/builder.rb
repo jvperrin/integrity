@@ -84,7 +84,7 @@ module Integrity
     end
 
     def checkout
-      @checkout ||= Checkout.new(repo, commit, directory, @build.project.name, @logger)
+      @checkout ||= Checkout.new(repo, commit, directory, @logger)
     end
 
     def directory

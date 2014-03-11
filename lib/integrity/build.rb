@@ -1,3 +1,5 @@
+require 'pry'
+
 module Integrity
   class Build
     include DataMapper::Resource
@@ -25,13 +27,16 @@ module Integrity
 
     after :create do
       project.raise_on_save_failure = true
-      project.update(last_build_id: id)
     end
 
     before :destroy do
       if commit
         commit.destroy!
       end
+    end
+
+    after :destroy do
+      binding.pry
     end
 
     def run
@@ -144,9 +149,9 @@ module Integrity
     def human_status_with_time
       if building?
         if human_time_since_start && !human_time_since_start.empty?
-          human_status + "for #{human_time_since_start}"
+          human_status + " for #{human_time_since_start}"
         elsif !pending?
-          human_status + "in #{human_duration}"
+          human_status + " in #{human_duration}"
         end
       else
         human_status

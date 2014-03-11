@@ -105,41 +105,6 @@ module Integrity
     end
     private :load_projects
 
-    # Start of pushing data to clients when builds start, complete, and
-    # console output, etc.
-    connections = []
-    notifications = []
-
-    get '/:project/builds/:build/connect', provides: 'text/event-stream' do
-      build = Build.first(id: params[:build])
-
-      stream :keep_open do |out|
-        connections << out
-
-        # Periodic notification:
-        if build && [:building, :pending].include?(build.reload.try(:status))
-          ping_data = -> { { status: build.try(:human_status_with_time),
-                             build_output: (bash_color_codes h(build.reload.try(:output))) }.to_json }
-
-          EventMachine::PeriodicTimer.new(1) { out << "data: #{ping_data.call}\n\n" }
-        end
-
-        # out.callback is called on stream close event
-        out.callback {
-          connections.delete(out) # Delete the connection
-        }
-      end
-    end
-
-    post '/:project/builds/:build/push' do
-      puts params
-      # Add the timestamp to the notification
-      notification = params.to_json
-
-      connections.each { |out| out << "data: #{notification}\n\n" }
-      notification
-    end
-
     get "/login" do
       login_required
 
@@ -292,6 +257,31 @@ module Integrity
 
       content_type :text
       current_build.output
+    end
+
+    # Push console output, etc. to clients
+    connections = []
+    notifications = []
+
+    get '/:project/builds/:build/connect', provides: 'text/event-stream' do
+      build = Build.first(id: params[:build])
+
+      stream :keep_open do |out|
+        connections << out
+
+        # Periodic notification of build status and output:
+        if build && [:building, :pending].include?(build.reload.try(:status))
+          ping_data = -> { { status: build.try(:human_status_with_time),
+                             build_output: (bash_color_codes h(build.reload.try(:output))) }.to_json }
+
+          EventMachine::PeriodicTimer.new(1) { out << "data: #{ping_data.call}\n\n" }
+        end
+
+        # out.callback is called on stream close event
+        out.callback {
+          connections.delete(out) # Delete the connection
+        }
+      end
     end
 
     post "/:project/builds/:build" do

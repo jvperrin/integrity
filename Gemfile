@@ -27,6 +27,8 @@ gem 'pry'
 # If you want to use Thin:
 gem 'thin'
 
+gem 'tux'
+
 # Foreman
 gem 'foreman', '~> 0.63.0'
 
