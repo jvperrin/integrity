@@ -1,5 +1,3 @@
-require 'pry'
-
 module Integrity
   class Build
     include DataMapper::Resource
@@ -33,10 +31,6 @@ module Integrity
       if commit
         commit.destroy!
       end
-    end
-
-    after :destroy do
-      binding.pry
     end
 
     def run
